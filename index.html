@@ -1,0 +1,825 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Abdulsakkeer CP · CCIE #51374</title>
+<meta name="description" content="Abdulsakkeer Chulliparambil — Sr. Network & Collaboration Engineer at Emircom (CCIE Collaboration #51374), Abu Dhabi.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Cg stroke='%235B6670' stroke-width='1.6'%3E%3Cpath d='M6 0v32M16 0v32M26 0v32M0 6h32M0 16h32M0 26h32'/%3E%3C/g%3E%3Ccircle cx='16' cy='16' r='4.2' fill='%233CE8D2'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@300;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #050708;
+    --ink: #E8EEF1;
+    --dim: #6E7B85;
+    --faint: #3A444C;
+    --line: rgba(232, 238, 241, 0.09);
+    --aqua: #3CE8D2;
+    --amber: #F5B942;
+    --aqua-soft: rgba(60, 232, 210, 0.07);
+    --display: 'Chakra Petch', sans-serif;
+    --mono: 'IBM Plex Mono', monospace;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--ink);
+    font-family: var(--display);
+    font-weight: 300;
+    -webkit-font-smoothing: antialiased;
+    overflow-x: hidden;
+  }
+
+  ::selection { background: var(--aqua); color: var(--bg); }
+
+  /* ---- scroll progress ---- */
+  #progress {
+    position: fixed;
+    top: 0; left: 0;
+    height: 2px;
+    width: 0;
+    z-index: 60;
+    background: linear-gradient(90deg, var(--aqua), var(--amber));
+    box-shadow: 0 0 14px rgba(60, 232, 210, 0.7);
+    pointer-events: none;
+  }
+
+  a { color: inherit; }
+  a:focus-visible, button:focus-visible {
+    outline: 2px solid var(--aqua);
+    outline-offset: 4px;
+  }
+
+  /* ---- fiber canvas + scrim ---- */
+  #fiber {
+    position: fixed;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 0;
+  }
+  .scrim {
+    position: fixed;
+    inset: 0;
+    z-index: 1;
+    pointer-events: none;
+    background:
+      radial-gradient(ellipse 120% 90% at 18% 30%, rgba(5, 7, 8, 0.7), transparent 55%),
+      linear-gradient(to bottom, rgba(5,7,8,0.6), transparent 22%, transparent 78%, rgba(5,7,8,0.85));
+  }
+
+  .wrap {
+    position: relative;
+    z-index: 2;
+    max-width: 1080px;
+    margin: 0 auto;
+    padding: 0 clamp(20px, 5vw, 48px);
+  }
+
+  /* ---- top bar ---- */
+  header {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    padding-top: 28px;
+    font-family: var(--mono);
+    font-size: 12px;
+    letter-spacing: 0.08em;
+    color: var(--dim);
+  }
+  header a {
+    text-decoration: none;
+    transition: color 0.2s;
+  }
+  header a:hover { color: var(--aqua); }
+
+  /* ---- hero ---- */
+  .hero {
+    position: relative;
+    min-height: calc(72svh - 76px);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 5vh 0;
+  }
+  .hero-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: center;
+    gap: clamp(28px, 4vw, 56px);
+  }
+
+  /* portrait, framed like a fiber connector ferrule */
+  .portrait {
+    position: relative;
+    width: clamp(150px, 20vw, 230px);
+    height: clamp(150px, 20vw, 230px);
+    aspect-ratio: 1;
+    border-radius: 50%;
+    padding: 10px;
+    border: 1px solid rgba(60, 232, 210, 0.3);
+    box-shadow: 0 0 44px rgba(60, 232, 210, 0.12), inset 0 0 26px rgba(60, 232, 210, 0.05);
+    perspective: 520px;
+  }
+  .portrait::after {
+    content: '';
+    position: absolute;
+    inset: -30px;
+    border-radius: 50%;
+    background: conic-gradient(from 0deg,
+      transparent 0deg, rgba(60, 232, 210, 0.32) 40deg, transparent 110deg,
+      transparent 180deg, rgba(245, 185, 66, 0.22) 230deg, transparent 300deg);
+    filter: blur(16px);
+    z-index: -1;
+    pointer-events: none;
+  }
+  .portrait::before {
+    content: '';
+    position: absolute;
+    inset: -11px;
+    border-radius: 50%;
+    border: 1px dashed rgba(60, 232, 210, 0.22);
+    animation: spin 48s linear infinite;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .portrait img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    object-fit: cover;
+    filter: saturate(0.8) contrast(1.04) brightness(0.96);
+    transition: transform 0.18s ease-out;
+    will-change: transform;
+  }
+  .status {
+    font-family: var(--mono);
+    font-size: 12px;
+    letter-spacing: 0.18em;
+    color: var(--dim);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 34px;
+  }
+  .led {
+    position: relative;
+    width: 7px; height: 7px;
+    border-radius: 50%;
+    background: var(--aqua);
+    box-shadow: 0 0 10px var(--aqua), 0 0 22px rgba(60,232,210,0.5);
+    animation: led 2.6s ease-in-out infinite;
+  }
+  .led::before {
+    content: '';
+    position: absolute;
+    inset: -2px;
+    border-radius: 50%;
+    border: 1px solid rgba(60, 232, 210, 0.7);
+    animation: ledping 2.6s ease-out infinite;
+  }
+  @keyframes ledping {
+    0% { transform: scale(1); opacity: 1; }
+    75%, 100% { transform: scale(3.4); opacity: 0; }
+  }
+  @keyframes led {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.35; }
+  }
+  h1 {
+    position: relative;
+    font-weight: 700;
+    font-size: clamp(2.4rem, 7.4vw, 5.6rem);
+    line-height: 0.98;
+    letter-spacing: -0.01em;
+    text-transform: uppercase;
+  }
+  .l1 {
+    display: block;
+    position: relative;
+  }
+  h1 .hollow {
+    display: block;
+    color: transparent;
+    -webkit-text-stroke: 1.5px rgba(232, 238, 241, 0.55);
+  }
+  @supports not (-webkit-text-stroke: 1px black) {
+    h1 .hollow { color: var(--faint); }
+  }
+  .role {
+    margin-top: 36px;
+    font-size: clamp(1rem, 2vw, 1.2rem);
+    font-weight: 300;
+    color: var(--ink);
+    letter-spacing: 0.02em;
+  }
+  .role em {
+    font-style: normal;
+    color: var(--dim);
+  }
+  .exp {
+    margin-top: 10px;
+    font-size: 0.95rem;
+    font-weight: 300;
+    color: var(--dim);
+    letter-spacing: 0.02em;
+  }
+  .ccie {
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+    margin-top: 20px;
+    font-family: var(--mono);
+    font-size: 13px;
+    letter-spacing: 0.14em;
+    color: var(--aqua);
+    border: 1px solid rgba(60, 232, 210, 0.28);
+    background: var(--aqua-soft);
+    padding: 9px 16px;
+  }
+  .ccie span { color: var(--dim); }
+
+  /* ---- sections ---- */
+  section { padding: clamp(70px, 12vh, 130px) 0; border-top: 1px solid var(--line); }
+
+  .prompt {
+    font-family: var(--mono);
+    font-size: 12px;
+    letter-spacing: 0.24em;
+    color: var(--dim);
+    margin-bottom: clamp(36px, 6vh, 56px);
+  }
+  .prompt::before {
+    content: '';
+    display: inline-block;
+    width: 26px;
+    height: 2px;
+    background: var(--aqua);
+    box-shadow: 0 0 10px rgba(60, 232, 210, 0.6);
+    margin-right: 14px;
+    vertical-align: 4px;
+  }
+
+  /* capabilities */
+  .domains {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+    gap: 1px;
+    background: var(--line);
+    border: 1px solid var(--line);
+  }
+  .domain {
+    background: var(--bg);
+    padding: 34px 26px 40px;
+    transition: background 0.25s, transform 0.35s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.35s;
+  }
+  .domain:hover {
+    background: #0a0e11;
+    transform: translateY(-6px);
+    box-shadow: 0 14px 40px rgba(0, 0, 0, 0.55), 0 0 28px rgba(60, 232, 210, 0.08);
+  }
+  .domain h3 {
+    font-weight: 600;
+    font-size: 1.02rem;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    margin: 18px 0 10px;
+  }
+  .domain p {
+    font-size: 0.88rem;
+    color: var(--dim);
+    font-weight: 300;
+    line-height: 1.6;
+  }
+  .tick {
+    display: block;
+    width: 26px;
+    height: 3px;
+    transition: width 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  .domain:hover .tick { width: 52px; }
+  .t-aqua  { background: var(--aqua); box-shadow: 0 0 12px rgba(60,232,210,0.55); }
+  .t-amber { background: var(--amber); box-shadow: 0 0 12px rgba(245,185,66,0.45); }
+  .t-white { background: var(--ink); box-shadow: 0 0 12px rgba(232,238,241,0.4); }
+  .t-dim   { background: var(--dim); box-shadow: 0 0 12px rgba(110,123,133,0.4); }
+  /* certifications */
+  .cert-hero {
+    display: flex;
+    align-items: baseline;
+    gap: clamp(14px, 3vw, 28px);
+    flex-wrap: wrap;
+  }
+  .cert-hero .big {
+    font-weight: 700;
+    font-size: clamp(3rem, 9vw, 6rem);
+    letter-spacing: 0.01em;
+    line-height: 1;
+  }
+  .cert-hero .num {
+    font-family: var(--mono);
+    font-size: clamp(1.2rem, 3.4vw, 2rem);
+    color: var(--aqua);
+    letter-spacing: 0.06em;
+    animation: numGlow 3s ease-in-out infinite;
+  }
+  @keyframes numGlow {
+    0%, 100% { text-shadow: 0 0 10px rgba(60, 232, 210, 0.35); }
+    50% { text-shadow: 0 0 26px rgba(60, 232, 210, 0.85); }
+  }
+  .cert-sub {
+    margin-top: 18px;
+    font-size: 0.95rem;
+    color: var(--dim);
+    letter-spacing: 0.04em;
+  }
+  .cert-list {
+    margin-top: 44px;
+    font-family: var(--mono);
+    font-size: 12.5px;
+    line-height: 2.4;
+    letter-spacing: 0.08em;
+    color: var(--dim);
+  }
+  .cert-list b { color: var(--ink); font-weight: 500; }
+  .edu {
+    margin-top: 40px;
+    padding-top: 24px;
+    border-top: 1px solid var(--line);
+    font-size: 0.95rem;
+    color: var(--ink);
+    letter-spacing: 0.03em;
+  }
+
+  /* footer / connect */
+  .connect { text-align: left; }
+  .cta {
+    position: relative;
+    overflow: hidden;
+    display: inline-flex;
+    align-items: center;
+    gap: 14px;
+    font-family: var(--mono);
+    font-size: 14px;
+    letter-spacing: 0.1em;
+    text-decoration: none;
+    color: var(--bg);
+    background: var(--aqua);
+    padding: 18px 30px;
+    font-weight: 500;
+    transition: transform 0.25s;
+    animation: ctaGlow 2.8s ease-in-out infinite;
+  }
+  @keyframes ctaGlow {
+    0%, 100% { box-shadow: 0 0 16px rgba(60, 232, 210, 0.25); }
+    50% { box-shadow: 0 0 44px rgba(60, 232, 210, 0.6); }
+  }
+  .cta:hover { transform: translateY(-2px); }
+  .cta svg { display: block; }
+  footer {
+    padding: 40px 0 36px;
+    border-top: 1px solid var(--line);
+    display: flex;
+    justify-content: space-between;
+    gap: 16px;
+    flex-wrap: wrap;
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.14em;
+    color: var(--faint);
+  }
+
+  /* ---- reveal on scroll ---- */
+  .reveal {
+    opacity: 0;
+    transform: translateY(26px);
+    filter: blur(10px);
+    transition: opacity 0.9s cubic-bezier(0.16, 1, 0.3, 1), transform 0.9s cubic-bezier(0.16, 1, 0.3, 1), filter 0.9s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  .reveal.in { opacity: 1; transform: none; filter: none; }
+
+  /* ---- hero load sequence ---- */
+  .rise {
+    opacity: 0;
+    transform: translateY(18px);
+    animation: rise 0.9s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  }
+  .rise.d1 { animation-delay: 0.15s; }
+  .rise.d2 { animation-delay: 0.3s; }
+  .rise.d3 { animation-delay: 0.5s; }
+  .rise.d4 { animation-delay: 0.65s; }
+  @keyframes rise { to { opacity: 1; transform: none; } }
+
+  @media (max-width: 860px) {
+    .hero-grid { grid-template-columns: 1fr; }
+    .portrait {
+      grid-row: 1;
+      width: clamp(120px, 30vw, 150px);
+      height: clamp(120px, 30vw, 150px);
+      margin-bottom: 10px;
+    }
+  }
+
+  @media (max-width: 560px) {
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    html { scroll-behavior: auto; }
+    .rise, .reveal { opacity: 1; transform: none; filter: none; animation: none; transition: none; }
+    .led, .portrait::before, .portrait::after,
+    .led::before, .cta, .cert-hero .num { animation: none; }
+  }
+</style>
+</head>
+<body>
+
+<div id="progress" aria-hidden="true"></div>
+
+<canvas id="fiber" aria-hidden="true"></canvas>
+<div class="scrim" aria-hidden="true"></div>
+
+<div class="wrap">
+
+  <header>
+    <a href="https://www.linkedin.com/in/abdulsakkeer-cp/" target="_blank" rel="noopener">LINKEDIN ↗</a>
+  </header>
+
+  <main>
+    <section class="hero" style="border-top:none">
+      <div class="hero-grid">
+        <div class="hero-text">
+          <p class="status rise d1"><span class="led"></span>ABU DHABI, UAE</p>
+          <h1>
+            <span class="l1 rise d2">Abdulsakkeer</span>
+            <span class="hollow rise d3">Chulliparambil</span>
+          </h1>
+          <p class="role rise d4">Sr. Network &amp; Collaboration Engineer</p>
+          <p class="exp rise d4">17+ years across enterprise networks, collaboration and unified communications — UAE &amp; India.</p>
+          <p class="rise d4"><span class="ccie">CCIE COLLABORATION #51374 <span>· SINCE 2015</span></span></p>
+        </div>
+        <figure class="portrait rise d2">
+          <img src="photo.jpg" alt="Portrait of Abdulsakkeer Chulliparambil" width="383" height="383">
+        </figure>
+      </div>
+    </section>
+
+    <section id="capabilities">
+      <p class="prompt reveal"><span class="cmd">EXPERTISE</span></p>
+      <div class="domains reveal">
+        <div class="domain">
+          <span class="tick t-aqua"></span>
+          <h3>Enterprise Networks</h3>
+          <p>Architecture, routing &amp; switching for large-scale, always-on environments.</p>
+        </div>
+        <div class="domain">
+          <span class="tick t-amber"></span>
+          <h3>Collaboration &amp; UC</h3>
+          <p>Cisco Call Manager, voice and unified communications end to end.</p>
+        </div>
+        <div class="domain">
+          <span class="tick t-white"></span>
+          <h3>Data Center</h3>
+          <p>Core data center technologies behind enterprise workloads.</p>
+        </div>
+        <div class="domain">
+          <span class="tick t-dim"></span>
+          <h3>Wireless</h3>
+          <p>Enterprise wireless infrastructure, designed and operated at scale.</p>
+        </div>
+      </div>
+    </section>
+
+    <section id="certifications">
+      <p class="prompt reveal"><span class="cmd">CERTIFICATIONS</span></p>
+      <div class="cert-hero reveal">
+        <span class="big">CCIE</span>
+        <span class="num">#51374</span>
+      </div>
+      <p class="cert-sub reveal">Cisco Certified Internetwork Expert, Collaboration — the highest tier of Cisco certification. Held since 2015.</p>
+      <p class="cert-list reveal"><b>CCNP ENTERPRISE (R&amp;S)</b> · <b>CCNP VOICE</b> · <b>CCNP DATA CENTER</b> · <b>CCNA</b> — CSCO11784259<br>CCIE ENTERPRISE INFRASTRUCTURE LAB · ATTEMPTED SEP 2023</p>
+      <p class="edu reveal">BTech, Electronics &amp; Communications Engineering — University of Calicut</p>
+    </section>
+
+    <section id="connect" class="connect">
+      <p class="prompt reveal"><span class="cmd">GET IN TOUCH</span></p>
+      <a class="cta reveal" href="https://www.linkedin.com/in/abdulsakkeer-cp/" target="_blank" rel="noopener">
+        CONNECT ON LINKEDIN
+        <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M1 13 L13 1 M13 1 H4 M13 1 V10" stroke="currentColor" stroke-width="1.6"/></svg>
+      </a>
+    </section>
+  </main>
+
+  <footer>
+    <span>ABU DHABI, UNITED ARAB EMIRATES</span>
+    <span>© 2026 ABDULSAKKEER CP</span>
+  </footer>
+
+</div>
+
+<script>
+(function () {
+  'use strict';
+
+  var canvas = document.getElementById('fiber');
+  var ctx = canvas.getContext('2d');
+  var reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  var W, H, dpr, GRID, cols, rows, ox, oy;
+  var flashes = [], pings = [];
+  var mouse = { x: -9999, y: -9999 };
+
+  window.addEventListener('mousemove', function (e) { mouse.x = e.clientX; mouse.y = e.clientY; });
+  window.addEventListener('mouseout', function () { mouse.x = -9999; mouse.y = -9999; });
+
+  // packet-light colors: OM3 aqua, single-mode amber, bare signal, 650nm fault red
+  var COLORS = [
+    { c: '60, 232, 210', w: 0.5 },
+    { c: '245, 185, 66', w: 0.25 },
+    { c: '232, 238, 241', w: 0.15 },
+    { c: '255, 77, 94', w: 0.1 }
+  ];
+
+  function buildGrid() {
+    GRID = W < 700 ? 56 : 78;
+    cols = Math.ceil(W / GRID) + 1;
+    rows = Math.ceil(H / GRID) + 1;
+    ox = Math.round((W - (cols - 1) * GRID) / 2);
+    oy = Math.round((H - (rows - 1) * GRID) / 2);
+    flashes = [];
+    pings = [];
+  }
+
+  function resize() {
+    dpr = Math.min(window.devicePixelRatio || 1, 2);
+    W = window.innerWidth;
+    H = window.innerHeight;
+    canvas.width = W * dpr;
+    canvas.height = H * dpr;
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    buildGrid();
+    if (reduced) drawStatic();
+  }
+
+  function pickColor() {
+    var r = Math.random(), acc = 0;
+    for (var i = 0; i < COLORS.length; i++) {
+      acc += COLORS[i].w;
+      if (r <= acc) return COLORS[i].c;
+    }
+    return COLORS[0].c;
+  }
+
+  function spawnFlash() {
+    if (flashes.length >= (W < 700 ? 6 : 11)) return;
+    flashes.push({
+      cx: Math.floor(Math.random() * (cols - 1)),
+      cy: Math.floor(Math.random() * (rows - 1)),
+      t: 0,
+      dur: 90 + Math.random() * 170,
+      color: pickColor()
+    });
+  }
+
+  function spawnPing(x, y, color, big) {
+    if (pings.length > 14) return;
+    pings.push({ x: x, y: y, r: 2, max: big ? GRID * 1.6 : GRID * 0.7, color: color, a: big ? 0.5 : 0.35 });
+  }
+
+  function drawPings() {
+    ctx.globalCompositeOperation = 'lighter';
+    for (var i = pings.length - 1; i >= 0; i--) {
+      var g = pings[i];
+      g.r += (g.max - g.r) * 0.06 + 0.35;
+      g.a *= 0.95;
+      if (g.a < 0.012) { pings.splice(i, 1); continue; }
+      ctx.beginPath();
+      ctx.arc(g.x, g.y, g.r, 0, Math.PI * 2);
+      ctx.strokeStyle = 'rgba(' + g.color + ', ' + g.a + ')';
+      ctx.lineWidth = 1;
+      ctx.stroke();
+    }
+    ctx.globalCompositeOperation = 'source-over';
+  }
+
+  // grid lines glow around the cursor
+  function drawSpotlight() {
+    if (mouse.x < -999) return;
+    var R = 200;
+    var g = ctx.createRadialGradient(mouse.x, mouse.y, 0, mouse.x, mouse.y, R);
+    g.addColorStop(0, 'rgba(60, 232, 210, 0.16)');
+    g.addColorStop(1, 'rgba(60, 232, 210, 0)');
+    ctx.save();
+    ctx.beginPath();
+    ctx.arc(mouse.x, mouse.y, R, 0, Math.PI * 2);
+    ctx.clip();
+    ctx.strokeStyle = g;
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    var c0 = Math.floor((mouse.x - R - ox) / GRID), c1 = Math.ceil((mouse.x + R - ox) / GRID);
+    var r0 = Math.floor((mouse.y - R - oy) / GRID), r1 = Math.ceil((mouse.y + R - oy) / GRID);
+    for (var c = c0; c <= c1; c++) {
+      var x = ox + c * GRID + 0.5;
+      ctx.moveTo(x, mouse.y - R);
+      ctx.lineTo(x, mouse.y + R);
+    }
+    for (var r = r0; r <= r1; r++) {
+      var y = oy + r * GRID + 0.5;
+      ctx.moveTo(mouse.x - R, y);
+      ctx.lineTo(mouse.x + R, y);
+    }
+    ctx.stroke();
+    var fill = ctx.createRadialGradient(mouse.x, mouse.y, 0, mouse.x, mouse.y, R);
+    fill.addColorStop(0, 'rgba(60, 232, 210, 0.035)');
+    fill.addColorStop(1, 'rgba(60, 232, 210, 0)');
+    ctx.fillStyle = fill;
+    ctx.fillRect(mouse.x - R, mouse.y - R, R * 2, R * 2);
+    ctx.restore();
+  }
+
+  function drawGrid() {
+    ctx.strokeStyle = 'rgba(232, 238, 241, 0.04)';
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    for (var c = 0; c < cols; c++) {
+      var x = ox + c * GRID + 0.5;
+      ctx.moveTo(x, 0);
+      ctx.lineTo(x, H);
+    }
+    for (var r = 0; r < rows; r++) {
+      var y = oy + r * GRID + 0.5;
+      ctx.moveTo(0, y);
+      ctx.lineTo(W, y);
+    }
+    ctx.stroke();
+  }
+
+  function drawFlashes() {
+    for (var i = flashes.length - 1; i >= 0; i--) {
+      var f = flashes[i];
+      f.t++;
+      if (f.t >= f.dur) { flashes.splice(i, 1); continue; }
+      var a = Math.sin(Math.PI * (f.t / f.dur));
+      var x = ox + f.cx * GRID, y = oy + f.cy * GRID;
+      ctx.fillStyle = 'rgba(' + f.color + ', ' + a * 0.05 + ')';
+      ctx.fillRect(x, y, GRID, GRID);
+      ctx.strokeStyle = 'rgba(' + f.color + ', ' + a * 0.2 + ')';
+      ctx.lineWidth = 1;
+      ctx.strokeRect(x + 0.5, y + 0.5, GRID, GRID);
+    }
+  }
+
+  function frame() {
+    ctx.clearRect(0, 0, W, H);
+    drawGrid();
+    drawSpotlight();
+    drawFlashes();
+    drawPings();
+    if (Math.random() < 0.08) spawnFlash();
+    if (Math.random() < 0.025) {
+      spawnPing(
+        ox + Math.floor(Math.random() * cols) * GRID,
+        oy + Math.floor(Math.random() * rows) * GRID,
+        pickColor(), true
+      );
+    }
+    requestAnimationFrame(frame);
+  }
+
+  function drawStatic() {
+    ctx.clearRect(0, 0, W, H);
+    drawGrid();
+    // a few lit cells and packet streaks so the page still glows without motion
+    for (var i = 0; i < 6; i++) {
+      var c = COLORS[i % 3].c;
+      var x = ox + Math.floor(Math.random() * (cols - 1)) * GRID;
+      var y = oy + Math.floor(Math.random() * (rows - 1)) * GRID;
+      ctx.fillStyle = 'rgba(' + c + ', 0.045)';
+      ctx.fillRect(x, y, GRID, GRID);
+      ctx.strokeStyle = 'rgba(' + c + ', 0.16)';
+      ctx.lineWidth = 1;
+      ctx.strokeRect(x + 0.5, y + 0.5, GRID, GRID);
+    }
+    for (var j = 0; j < 4; j++) {
+      var cc = COLORS[j % 3].c;
+      var gx = ox + (1 + Math.floor(Math.random() * (cols - 2))) * GRID;
+      var gy = oy + (1 + Math.floor(Math.random() * (rows - 2))) * GRID;
+      var g = ctx.createRadialGradient(gx, gy, 0, gx, gy, 6);
+      g.addColorStop(0, 'rgba(' + cc + ', 0.7)');
+      g.addColorStop(1, 'rgba(' + cc + ', 0)');
+      ctx.fillStyle = g;
+      ctx.beginPath();
+      ctx.arc(gx, gy, 6, 0, Math.PI * 2);
+      ctx.fill();
+    }
+  }
+
+  var resizeTimer;
+  window.addEventListener('resize', function () {
+    clearTimeout(resizeTimer);
+    resizeTimer = setTimeout(resize, 150);
+  });
+
+  resize();
+  if (!reduced) {
+    for (var i = 0; i < 4; i++) spawnFlash();
+    requestAnimationFrame(frame);
+  }
+
+  // scroll reveals
+  var revealed = document.querySelectorAll('.reveal');
+  if (reduced || !('IntersectionObserver' in window)) {
+    revealed.forEach(function (el) { el.classList.add('in'); });
+  } else {
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (e) {
+        if (e.isIntersecting) {
+          e.target.classList.add('in');
+          io.unobserve(e.target);
+        }
+      });
+    }, { threshold: 0.15, rootMargin: '0px 0px -40px 0px' });
+    revealed.forEach(function (el) { io.observe(el); });
+  }
+
+  // scroll progress bar
+  var prog = document.getElementById('progress');
+  function updateProgress() {
+    var doc = document.documentElement;
+    var max = doc.scrollHeight - doc.clientHeight;
+    prog.style.width = (max > 0 ? (doc.scrollTop / max) * 100 : 0) + '%';
+  }
+  window.addEventListener('scroll', updateProgress, { passive: true });
+  updateProgress();
+
+  // CLI prompts type themselves out on first view
+  var cmds = document.querySelectorAll('.prompt .cmd');
+  if (!reduced && 'IntersectionObserver' in window) {
+    var cmdIO = new IntersectionObserver(function (entries) {
+      entries.forEach(function (e) {
+        if (!e.isIntersecting) return;
+        cmdIO.unobserve(e.target);
+        var el = e.target;
+        var full = el.textContent;
+        var i = 0;
+        el.textContent = '';
+        el.classList.add('typing');
+        (function tick() {
+          el.textContent = full.slice(0, ++i);
+          if (i < full.length) setTimeout(tick, 36);
+          else setTimeout(function () { el.classList.remove('typing'); }, 700);
+        })();
+      });
+    }, { threshold: 0.8 });
+    cmds.forEach(function (el) { cmdIO.observe(el); });
+  }
+
+  // CCIE number decrypts itself
+  var certNum = document.querySelector('.cert-hero .num');
+  if (certNum && !reduced && 'IntersectionObserver' in window) {
+    var numIO = new IntersectionObserver(function (entries) {
+      entries.forEach(function (e) {
+        if (!e.isIntersecting) return;
+        numIO.unobserve(e.target);
+        var finalText = certNum.textContent;
+        var startAt = performance.now();
+        (function scramble() {
+          var elapsed = performance.now() - startAt;
+          var out = '';
+          for (var i = 0; i < finalText.length; i++) {
+            var ch = finalText[i];
+            if (ch < '0' || ch > '9') { out += ch; continue; }
+            out += elapsed > 260 + i * 150 ? ch : String(Math.floor(Math.random() * 10));
+          }
+          certNum.textContent = out;
+          if (out !== finalText) setTimeout(scramble, 45);
+        })();
+      });
+    }, { threshold: 0.8 });
+    numIO.observe(certNum);
+  }
+
+  // portrait tilts toward the cursor
+  var portrait = document.querySelector('.portrait');
+  var portraitImg = portrait && portrait.querySelector('img');
+  if (portraitImg && !reduced && window.matchMedia('(hover: hover)').matches) {
+    portrait.addEventListener('mousemove', function (e) {
+      var rect = portrait.getBoundingClientRect();
+      var dx = (e.clientX - rect.left) / rect.width - 0.5;
+      var dy = (e.clientY - rect.top) / rect.height - 0.5;
+      portraitImg.style.transform =
+        'rotateY(' + (dx * 16).toFixed(2) + 'deg) rotateX(' + (-dy * 16).toFixed(2) + 'deg) scale(1.05)';
+    });
+    portrait.addEventListener('mouseleave', function () {
+      portraitImg.style.transform = '';
+    });
+  }
+})();
+</script>
+
+</body>
+</html>
